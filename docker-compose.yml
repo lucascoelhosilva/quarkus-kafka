@@ -1,0 +1,53 @@
+version: '3.1'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-ecommerce
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-ecommerce
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+  api-users:
+    image: lucascoelho/api-users:latest
+    container_name: api-users
+    build:
+      context: api-users
+      dockerfile: src/main/docker/Dockerfile.jvm
+    ports:
+      - 8080:8080
+      - 5005:5005
+#    environment:
+#      SERVER_PORT: 8090
+#      JAVA_DEBUG_PORT: 5005
+#      JAVA_DEBUG: "true"
+#      JAVA_OPTIONS: "-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager "
+  api-sales:
+    image: lucascoelho/api-sales:latest
+    container_name: api-sales
+    build:
+      context: api-sales
+      dockerfile: src/main/docker/Dockerfile.jvm
+    ports:
+      - "8090:8090"
+      - "5095:5095"
+    environment:
+      KAFKA_SERVER: kafka:9092
+#      SERVER_PORT: 8090
+#      JAVA_DEBUG_PORT: 5095
+#      JAVA_DEBUG: "true"
+#      JAVA_OPTIONS: "-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager "
+networks:
+  default:
