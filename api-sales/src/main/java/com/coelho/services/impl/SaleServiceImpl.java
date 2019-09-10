@@ -4,6 +4,7 @@ import com.coelho.exceptions.NotFoundException;
 import com.coelho.models.Sale;
 import com.coelho.repositories.SaleRepository;
 import com.coelho.services.SaleService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -51,7 +52,7 @@ public class SaleServiceImpl implements SaleService {
     public Sale create(Sale sale) {
         saleRepository.persist(sale);
 
-        kafkaProducerService.process(sale);
+        sendKafka(sale);
 
         LOGGER.log(Level.INFO, "Sale created");
         return sale;
@@ -71,7 +72,9 @@ public class SaleServiceImpl implements SaleService {
             }
             saleRepository.persist(saleDB);
             LOGGER.log(Level.INFO, "Sale updated");
-            kafkaProducerService.process(sale);
+
+            sendKafka(sale);
+
             return saleDB;
         } else {
             LOGGER.log(Level.INFO, NOT_FOUND_MESSAGE, saleDB.getId());
@@ -88,6 +91,14 @@ public class SaleServiceImpl implements SaleService {
         } else {
             LOGGER.log(Level.WARNING, NOT_FOUND_MESSAGE, id);
             throw new NotFoundException(NOT_FOUND_MESSAGE);
+        }
+    }
+
+    private void sendKafka(Sale sale){
+        try {
+            kafkaProducerService.process(sale);
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.SEVERE, "Error sending message to Kafka");
         }
     }
 }

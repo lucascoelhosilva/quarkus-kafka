@@ -15,6 +15,10 @@
 #
 ###
 FROM fabric8/java-alpine-openjdk8-jre
+RUN apk update && \
+  apk add --no-cache libc6-compat && \
+  ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
+
 ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV AB_ENABLED=jmx_exporter
 COPY target/lib/* /deployments/lib/

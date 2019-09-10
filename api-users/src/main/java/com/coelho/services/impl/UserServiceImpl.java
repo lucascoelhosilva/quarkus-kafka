@@ -4,6 +4,7 @@ import com.coelho.exceptions.NotFoundException;
 import com.coelho.models.User;
 import com.coelho.repositories.UserRepository;
 import com.coelho.services.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -25,6 +26,9 @@ public class UserServiceImpl implements UserService {
 
     @Inject
     UserRepository userRepository;
+
+    @Inject
+    KafkaProducerService kafkaProducerService;
 
     @Override
     public User findById(UUID id) {
@@ -48,6 +52,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         userRepository.persist(user);
+
+        try {
+            kafkaProducerService.process(user);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         LOGGER.log(Level.INFO, "User created");
         return user;
     }
@@ -84,5 +95,4 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException(NOT_FOUND_MESSAGE);
         }
     }
-
 }

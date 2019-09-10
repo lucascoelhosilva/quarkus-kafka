@@ -2,7 +2,7 @@ package com.coelho.services.impl;
 
 import com.coelho.configuration.KafkaConfiguration;
 import com.coelho.dtos.KafkaMessage;
-import com.coelho.models.Sale;
+import com.coelho.models.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.logging.Level;
@@ -17,11 +17,11 @@ public class KafkaProducerService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final String KAFKA_TOPIC = "%s-api-sales";
+    private final String KAFKA_TOPIC = "%s-api-users";
 
-    public void process(Sale sale) throws JsonProcessingException {
+    void process(User user) throws JsonProcessingException {
         KafkaConfiguration.createProducer().send(
-                new ProducerRecord<>(buildTopicName(sale.getCustomerId().toString()), buildMessage(sale))
+                new ProducerRecord<>(buildTopicName(user.getId().toString()), buildMessage(user))
         );
     }
 
@@ -29,9 +29,9 @@ public class KafkaProducerService {
         return String.format(KAFKA_TOPIC, customerId);
     }
 
-    private KafkaMessage buildMessage(Sale sale) throws JsonProcessingException {
-        LOGGER.log(Level.INFO, "Sending to KAFKA " + sale.toString());
+    private KafkaMessage buildMessage(User user) throws JsonProcessingException {
+        LOGGER.log(Level.INFO, "Sending to KAFKA " + user.toString());
 
-        return KafkaMessage.builder().payload(objectMapper.writeValueAsString(sale)).build();
+        return KafkaMessage.builder().payload(objectMapper.writeValueAsString(user)).build();
     }
 }

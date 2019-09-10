@@ -7,11 +7,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/api-sales-jvm .
+# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/api-notification-jvm .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/api-sales-jvm
+# docker run -i --rm -p 8080:8080 quarkus/api-notification-jvm
 #
 ###
 FROM fabric8/java-alpine-openjdk8-jre
