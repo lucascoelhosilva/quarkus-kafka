@@ -1,6 +1,7 @@
 package com.coelho.services.impl;
 
 import com.coelho.dtos.KafkaMessage;
+import com.coelho.dtos.SaleDTO;
 import com.coelho.dtos.UserDTO;
 import com.coelho.services.INotifications;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,15 +28,22 @@ public class NotificationsService implements INotifications {
     @Override
     public void sendEmail(KafkaMessage kafkaMessage) {
         try {
-            kafkaMessage.getHeaders();
-            UserDTO userDTO = convertToObjectUser(kafkaMessage);
-
             Mail mail = new Mail();
-//            mail.setFrom("lucascoelhosilva@outlook.com");
-            mail.setSubject("Olá!");
-            mail.setText("Seja bem-vindo ao quarkus!");
-            mail.setTo(Collections.singletonList(userDTO.getEmail()));
-//            mailer.send(mail);
+
+            if(kafkaMessage.getHeaders().containsValue("api-sales")){
+                SaleDTO saleDTO = convertToObjectSale(kafkaMessage);
+
+                System.out.println("SALEDTO __" + saleDTO);
+            } else {
+                UserDTO userDTO = convertToObjectUser(kafkaMessage);
+                System.out.println("USERDTO __" + userDTO);
+
+                mail.setFrom("lucascoelhosilva@outlook.com");
+                mail.setSubject("Olá!");
+                mail.setText("Seja bem-vindo ao quarkus!");
+                mail.setTo(Collections.singletonList(userDTO.getEmail()));
+//                mailer.send(mail);
+            }
         } catch (IOException e) {
             LOGGER.error("Error parsing JSON to Object", e);
         }
@@ -43,6 +51,10 @@ public class NotificationsService implements INotifications {
 
     private UserDTO convertToObjectUser(KafkaMessage kafkaMessage) throws IOException {
         return objectMapper.readValue(kafkaMessage.getPayload(), UserDTO.class);
+    }
+
+    private SaleDTO convertToObjectSale(KafkaMessage kafkaMessage) throws IOException {
+        return objectMapper.readValue(kafkaMessage.getPayload(), SaleDTO.class);
     }
 
     public void sendEmail(ReceiverRecord<String, KafkaMessage> record) {

@@ -98,7 +98,7 @@ public class SaleServiceImpl implements SaleService {
         try {
             kafkaProducerService.process(sale);
         } catch (JsonProcessingException e) {
-            LOGGER.log(Level.SEVERE, "Error sending message to Kafka");
+            LOGGER.log(Level.SEVERE, "Error sending message to Kafka", e);
         }
     }
 }

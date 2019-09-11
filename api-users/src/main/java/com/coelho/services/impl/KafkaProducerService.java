@@ -5,6 +5,8 @@ import com.coelho.dtos.KafkaMessage;
 import com.coelho.models.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
@@ -30,8 +32,13 @@ public class KafkaProducerService {
     }
 
     private KafkaMessage buildMessage(User user) throws JsonProcessingException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("module", "api-users");
         LOGGER.log(Level.INFO, "Sending to KAFKA " + user.toString());
 
-        return KafkaMessage.builder().payload(objectMapper.writeValueAsString(user)).build();
+        return KafkaMessage.builder()
+                .payload(objectMapper.writeValueAsString(user))
+                .headers(headers)
+                .build();
     }
 }

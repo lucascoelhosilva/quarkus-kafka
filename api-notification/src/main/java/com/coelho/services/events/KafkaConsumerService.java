@@ -5,6 +5,8 @@ import com.coelho.dtos.KafkaMessage;
 import com.coelho.services.impl.NotificationsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.runtime.StartupEvent;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -24,7 +26,7 @@ public class KafkaConsumerService {
     @Inject
     NotificationsService notificationsService;
 
-    private static final String API_USERS_TOPIC_PATTERN = ".*-api-users";
+    private static final String TOPICS_PATTERN = ".*-api-users|.*-api-sales";
 
     void onStart(@Observes StartupEvent ev){
         initializeReceiver();
@@ -32,7 +34,7 @@ public class KafkaConsumerService {
 
     private void initializeReceiver() {
         ReceiverOptions<String, KafkaMessage> receiverOptions = new KafkaConfiguration().receiverOptions();
-        receiverOptions.subscription(Pattern.compile(API_USERS_TOPIC_PATTERN));
+        receiverOptions.subscription(Pattern.compile(TOPICS_PATTERN));
         LOGGER.info("Initializing Kafka Receiver");
 
         KafkaReceiver.create(receiverOptions)

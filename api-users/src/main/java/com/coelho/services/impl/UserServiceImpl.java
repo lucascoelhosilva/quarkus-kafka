@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
         try {
             kafkaProducerService.process(user);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error sending to Kafka", e);
         }
 
         LOGGER.log(Level.INFO, "User created");

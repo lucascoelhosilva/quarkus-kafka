@@ -5,6 +5,8 @@ import com.coelho.dtos.KafkaMessage;
 import com.coelho.models.Sale;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
@@ -17,9 +19,9 @@ public class KafkaProducerService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final String KAFKA_TOPIC = "%s-api-sales";
+    private final String KAFKA_TOPIC = "%s-api-sales";
 
-    public void process(Sale sale) throws JsonProcessingException {
+    void process(Sale sale) throws JsonProcessingException {
         KafkaConfiguration.createProducer().send(
                 new ProducerRecord<>(buildTopicName(sale.getCustomerId().toString()), buildMessage(sale))
         );
@@ -30,8 +32,13 @@ public class KafkaProducerService {
     }
 
     private KafkaMessage buildMessage(Sale sale) throws JsonProcessingException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("module", "api-sales");
         LOGGER.log(Level.INFO, "Sending to KAFKA " + sale.toString());
 
-        return KafkaMessage.builder().payload(objectMapper.writeValueAsString(sale)).build();
+        return KafkaMessage.builder()
+                .payload(objectMapper.writeValueAsString(sale))
+                .headers(headers)
+                .build();
     }
 }

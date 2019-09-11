@@ -1,5 +1,6 @@
 package com.coelho.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.util.UUID;
 import javax.persistence.Cacheable;
@@ -42,5 +43,6 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "FK_SALE_ID")
     @ToString.Exclude
+    @JsonIgnore
     private Sale sale;
 }
