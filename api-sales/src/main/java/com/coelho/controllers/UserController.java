@@ -49,7 +49,7 @@ public class UserController {
     @GET
     @Path("/{id}")
     public Response findById(@PathParam("id") UUID id) {
-        User user = userService.findById(id);
+        User user = userService.findById(id).get();
         UserDTO userDTO = UserMapper.toDTO(user);
         return Response.ok(userDTO).build();
     }

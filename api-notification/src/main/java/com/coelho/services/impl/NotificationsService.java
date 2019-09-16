@@ -33,16 +33,20 @@ public class NotificationsService implements INotifications {
             if(kafkaMessage.getHeaders().containsValue("api-sales")){
                 SaleDTO saleDTO = convertToObjectSale(kafkaMessage);
 
-                System.out.println("SALEDTO __" + saleDTO);
+                LOGGER.info("Sale {0}", saleDTO);
+
+                mail.setSubject("Thanks!");
+                mail.setText("Your product is amazing!");
+                mail.setTo(Collections.singletonList(saleDTO.getUser().getEmail()));
+                mailer.send(mail);
             } else {
                 UserDTO userDTO = convertToObjectUser(kafkaMessage);
-                System.out.println("USERDTO __" + userDTO);
+                LOGGER.info("User " + userDTO);
 
-                mail.setFrom("lucascoelhosilva@outlook.com");
-                mail.setSubject("Olá!");
-                mail.setText("Seja bem-vindo ao quarkus!");
+                mail.setSubject("Hi, Welcome!");
+                mail.setText("Thanks for register!");
                 mail.setTo(Collections.singletonList(userDTO.getEmail()));
-//                mailer.send(mail);
+                mailer.send(mail);
             }
         } catch (IOException e) {
             LOGGER.error("Error parsing JSON to Object", e);

@@ -2,6 +2,7 @@ package com.coelho.mappers;
 
 import com.coelho.dtos.SaleDTO;
 import com.coelho.models.Sale;
+import com.coelho.models.User;
 import java.util.stream.Collectors;
 
 public class SaleMapper {
@@ -10,7 +11,7 @@ public class SaleMapper {
                 sale.getId(),
                 sale.getDate(),
                 sale.getPrice(),
-                sale.getCustomerId(),
+                sale.getUser().getId(),
                 sale.getProducts()
                         .stream()
                         .map(ProductMapper::toDTO)
@@ -21,7 +22,7 @@ public class SaleMapper {
     public static Sale toModel(SaleDTO saleDTO) {
         Sale sale = new Sale();
         sale.setDate(saleDTO.getDate());
-        sale.setCustomerId(saleDTO.getCustomerId());
+        sale.setUser(new User(saleDTO.getUserId()));
         sale.setPrice(saleDTO.getPrice());
 
         if (!saleDTO.getProducts().isEmpty()) {

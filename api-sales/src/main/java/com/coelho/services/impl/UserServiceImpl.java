@@ -6,6 +6,7 @@ import com.coelho.repositories.UserRepository;
 import com.coelho.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
     KafkaProducerService kafkaProducerService;
 
     @Override
-    public User findById(UUID id) {
+    public Optional<User> findById(UUID id) {
 
         User user = userRepository.findById(id);
         if (isNull(user)) {
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
         }
 
         LOGGER.log(Level.INFO, "User found {0}", id);
-        return user;
+        return Optional.of(user);
     }
 
     @Override

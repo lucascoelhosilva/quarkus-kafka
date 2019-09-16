@@ -2,11 +2,12 @@ package com.coelho.services;
 
 import com.coelho.models.User;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
 
-    User findById(UUID id);
+    Optional<User> findById(UUID id);
 
     List<User> findAll();
 

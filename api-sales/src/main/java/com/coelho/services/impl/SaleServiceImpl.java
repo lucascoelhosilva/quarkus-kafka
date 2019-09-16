@@ -1,10 +1,13 @@
 package com.coelho.services.impl;
 
 import com.coelho.exceptions.NotFoundException;
+import com.coelho.models.Product;
 import com.coelho.models.Sale;
 import com.coelho.repositories.SaleRepository;
 import com.coelho.services.SaleService;
+import com.coelho.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -26,6 +29,9 @@ public class SaleServiceImpl implements SaleService {
 
     @Inject
     SaleRepository saleRepository;
+
+    @Inject
+    UserService userService;
 
     @Inject
     KafkaProducerService kafkaProducerService;
@@ -50,9 +56,14 @@ public class SaleServiceImpl implements SaleService {
     @Transactional
     @Override
     public Sale create(Sale sale) {
+        validateUser(sale);
         saleRepository.persist(sale);
 
         sendKafka(sale);
+
+        if(nonNull(sale.getProducts())){
+            sale.setPrice(sale.getProducts().stream().map(Product::getPrice).reduce(BigDecimal::add).get());
+        }
 
         LOGGER.log(Level.INFO, "Sale created");
         return sale;
@@ -100,5 +111,13 @@ public class SaleServiceImpl implements SaleService {
         } catch (JsonProcessingException e) {
             LOGGER.log(Level.SEVERE, "Error sending message to Kafka", e);
         }
+    }
+
+    private void validateUser(Sale sale){
+        sale.setUser(
+                userService.findById(sale.getUser().getId()).isPresent() ?
+                        userService.findById(sale.getUser().getId()).get() :
+                        null
+        );
     }
 }

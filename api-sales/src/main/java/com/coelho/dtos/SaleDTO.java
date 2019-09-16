@@ -23,8 +23,8 @@ public class SaleDTO implements Serializable {
     private Date date;
     private BigDecimal price;
 
-    @NotNull(message = "CustomerId is required")
-    private UUID customerId;
+    @NotNull(message = "UserId is required")
+    private UUID userId;
 
     @NotNull(message = "Products is required")
     private List<ProductDTO> products;

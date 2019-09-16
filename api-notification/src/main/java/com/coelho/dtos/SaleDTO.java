@@ -21,6 +21,6 @@ public class SaleDTO implements Serializable {
     private UUID id;
     private Date date;
     private BigDecimal price;
-    private UUID customerId;
+    private UserDTO user;
     private List<ProductDTO> products;
 }

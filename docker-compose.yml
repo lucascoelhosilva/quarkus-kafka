@@ -21,21 +21,6 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_ADVERTISED_HOST_NAME: kafka
-  api-users:
-    image: lucascoelho/api-users:latest
-    container_name: api-users
-    build:
-      context: api-users
-      dockerfile: src/main/docker/Dockerfile.jvm
-    ports:
-      - "8080:8080"
-      - "5005:5005"
-    environment:
-      SERVER_PORT: 8080
-      JAVA_DEBUG_PORT: 5005
-      JAVA_DEBUG: "true"
-      JAVA_OPTIONS: "-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager "
-      KAFKA_SERVER: kafka:9092
   api-sales:
     image: lucascoelho/api-sales:latest
     container_name: api-sales
@@ -62,13 +47,11 @@ services:
       - "5075:5075"
     environment:
       SERVER_PORT: 8070
-      JAVA_DEBUG_PORT: 5075
-      JAVA_DEBUG: "true"
-      JAVA_OPTIONS: "-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager "
+      JAVA_OPTS: "-Djava.security.egd=file:/dev/./urandom -XX:+UseParallelGC -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5075 -Xmx256m"
       KAFKA_SERVER: kafka:9092
-      KAFKA_CLIENTID: api-sales
-      KAFKA_GROUPID: api-sales
-      ACCOUNT_PASSWORD: blank
-      ACCOUNT_EMAIL: blank
+      KAFKA_CLIENTID: api-notification
+      KAFKA_GROUPID: api-notification
+      ACCOUNT_EMAIL: "your-email"
+      ACCOUNT_PASSWORD: "password-generate"
 networks:
   default:

@@ -1,9 +1,9 @@
 package com.coelho.configuration;
 
 import com.coelho.dtos.KafkaMessage;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import javax.enterprise.context.ApplicationScoped;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -23,6 +23,8 @@ public class KafkaConfiguration {
     @ConfigProperty(name = "kafka.groupId")
     private String groupId = "api-notification";
 
+    private static final String TOPICS_PATTERN = ".*-api-users|.*-api-sales";
+
     public ReceiverOptions<String, KafkaMessage> receiverOptions() {
 
         Map<String, Object> configuration = new HashMap<>();
@@ -37,7 +39,9 @@ public class KafkaConfiguration {
         configuration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         configuration.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, 1000);
 
-        ReceiverOptions<String, KafkaMessage> receiverOptions = ReceiverOptions.create(Collections.unmodifiableMap(configuration));
+        ReceiverOptions<String, KafkaMessage> receiverOptions = ReceiverOptions.create(configuration);
+        receiverOptions.subscription(Pattern.compile(TOPICS_PATTERN));
+
         return receiverOptions;
     }
 }
