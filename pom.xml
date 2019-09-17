@@ -7,7 +7,6 @@
     <version>1.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>api-users</module>
         <module>api-sales</module>
         <module>api-notification</module>
     </modules>

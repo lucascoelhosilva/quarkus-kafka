@@ -48,9 +48,6 @@ services:
     environment:
       SERVER_PORT: 8070
       JAVA_OPTS: "-Djava.security.egd=file:/dev/./urandom -XX:+UseParallelGC -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5075 -Xmx256m"
-      KAFKA_SERVER: kafka:9092
-      KAFKA_CLIENTID: api-notification
-      KAFKA_GROUPID: api-notification
       ACCOUNT_EMAIL: "your-email"
       ACCOUNT_PASSWORD: "password-generate"
 networks:

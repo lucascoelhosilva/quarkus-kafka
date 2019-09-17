@@ -14,13 +14,8 @@ import reactor.kafka.receiver.ReceiverOptions;
 @ApplicationScoped
 public class KafkaConfiguration {
 
-    @ConfigProperty(name="kafka.bootstrap.servers", defaultValue = "localhost:9092")
     private String bootstrapServers = "kafka:9092";
-
-    @ConfigProperty(name = "kafka.clientId")
     private String clientId = "api-notification";
-
-    @ConfigProperty(name = "kafka.groupId")
     private String groupId = "api-notification";
 
     private static final String TOPICS_PATTERN = ".*-api-users|.*-api-sales";
