@@ -1,4 +1,4 @@
-# Project microservices
+# E-commerce
 
 > Project created for studies
 
@@ -21,7 +21,6 @@ When done, you can configure the api-notification in file `docker-compose.yml` w
 
 ##### Building Projects 
  - api-notification
- - api-users
  - api-sales
 
 > mvn clean package
@@ -29,7 +28,6 @@ When done, you can configure the api-notification in file `docker-compose.yml` w
 ####Running
  - api-notification
  - api-sales
- - api-users
 
 > docker-compose build
 
