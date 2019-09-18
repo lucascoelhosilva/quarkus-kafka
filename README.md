@@ -1,4 +1,4 @@
-# E-commerce
+# microservice
 
 > Project created for studies
 
